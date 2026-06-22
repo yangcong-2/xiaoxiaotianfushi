@@ -1,0 +1,475 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>小小天赋师 · 儿童天赋与发展方向测评</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#6C5CE7;--primary-light:#A29BFE;--primary-bg:#F0EEFF;--accent:#FD79A8;--accent-bg:#FFF0F5;--green:#00B894;--green-bg:#D4F5ED;--orange:#FDCB6E;--orange-bg:#FFF8E1;--blue:#0984E3;--blue-bg:#E3F2FD;--red:#E17055;--red-bg:#FFF3F0;--purple:#9C27B0;--purple-bg:#F3E5F5;--bg:#FAFAFE;--card:#FFF;--text:#2D3436;--text-sec:#636E72;--shadow:0 8px 32px rgba(108,92,231,0.10);--radius:20px;--radius-sm:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;justify-content:center;padding:16px;line-height:1.6}
+.app{max-width:800px;width:100%}
+.screen{display:none}.screen.active{display:block}
+
+/* Welcome */
+#welcome{text-align:center;padding:40px 10px}
+#welcome .logo{font-size:72px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+#welcome h1{font-size:32px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#welcome .sub{color:var(--text-sec);margin-bottom:24px;font-size:14px}
+.welcome-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:28px}
+.welcome-card{background:var(--card);border-radius:var(--radius);padding:16px 12px;box-shadow:var(--shadow)}
+.welcome-card .icon{font-size:30px}
+.welcome-card h3{font-size:14px;margin:4px 0 2px}
+.welcome-card p{font-size:11px;color:var(--text-sec)}
+.user-form{background:var(--card);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow);max-width:400px;margin:0 auto;text-align:left}
+.user-form h2{font-size:17px;margin-bottom:14px;text-align:center}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--text-sec);margin-bottom:3px}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:2px solid #E0E0E0;border-radius:var(--radius-sm);font-size:15px;outline:none;background:#fff}
+.form-group input:focus,.form-group select:focus{border-color:var(--primary-light)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 28px;border-radius:50px;border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .25s;text-decoration:none}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:0 4px 16px rgba(108,92,231,0.3)}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(108,92,231,0.4)}
+.btn-secondary{background:var(--primary-bg);color:var(--primary)}
+.btn-block{width:100%}
+
+/* Quiz */
+#quiz{padding:8px 0}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.quiz-header .domain-tag{display:inline-flex;align-items:center;gap:4px;background:var(--primary-bg);color:var(--primary);padding:5px 14px;border-radius:50px;font-size:13px;font-weight:600}
+.quiz-header .counter{color:var(--text-sec);font-size:12px}
+.progress-bar{width:100%;height:6px;background:#E8E8E8;border-radius:50px;margin-bottom:24px;overflow:hidden}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:50px;transition:width .5s ease;width:0%}
+.question-card{background:var(--card);border-radius:var(--radius);padding:28px 24px;box-shadow:var(--shadow);min-height:320px;display:flex;flex-direction:column}
+.question-card .q-label{font-size:12px;color:var(--text-sec);margin-bottom:3px;font-weight:500}
+.question-card .q-text{font-size:19px;font-weight:700;margin-bottom:20px;flex:1}
+.rating-row{display:flex;gap:5px;padding:8px 0}
+.rating-btn{flex:1;background:#F5F5F5;border:2px solid transparent;border-radius:var(--radius-sm);padding:8px 2px;text-align:center;cursor:pointer;transition:all .2s;font-size:11px;color:var(--text-sec);user-select:none}
+.rating-btn .emoji{display:block;font-size:26px;margin-bottom:1px}
+.rating-btn:hover{background:var(--primary-bg)}
+.rating-btn.selected{border-color:var(--primary);background:var(--primary-bg);color:var(--primary);font-weight:600}
+.rating-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-sec);padding:0 4px;margin-bottom:8px}
+.question-nav{display:flex;justify-content:space-between;margin-top:18px}
+.question-nav .btn{padding:10px 20px;font-size:13px}
+
+/* Results */
+#results{padding:8px 0}
+
+/* --- Result Header Card --- */
+.share-card{background:linear-gradient(135deg,#6C5CE7 0%,#A29BFE 100%);border-radius:var(--radius);padding:32px 24px;margin-bottom:20px;color:#fff;text-align:center;position:relative;overflow:hidden}
+.share-card::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.06)}
+.share-card::after{content:'';position:absolute;bottom:-40px;left:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.04)}
+.share-card .sc-icon{font-size:56px;margin-bottom:6px}
+.share-card h2{font-size:24px;font-weight:700;margin-bottom:2px}
+.share-card .sc-sub{font-size:13px;opacity:0.85;margin-bottom:4px}
+.share-card .sc-tag{display:inline-block;background:rgba(255,255,255,0.2);padding:4px 16px;border-radius:50px;font-size:12px;margin-top:4px}
+
+/* --- Direction Grid --- */
+.direction-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:20px}
+.dir-card{background:var(--card);border-radius:var(--radius);padding:18px 16px 16px;box-shadow:var(--shadow);text-align:center;border:3px solid transparent;transition:all .3s}
+.dir-card.top1{border-color:var(--primary);background:linear-gradient(135deg,#fff,#F0EEFF)}
+.dir-card .d-icon{font-size:36px}
+.dir-card .d-name{font-size:16px;font-weight:700;margin:4px 0 2px}
+.dir-card .d-pct{font-size:28px;font-weight:800;color:var(--primary)}
+.dir-card .d-pct sup{font-size:14px}
+.dir-card .d-label{font-size:11px;color:var(--text-sec);margin-bottom:6px}
+.dir-card .d-tag{display:inline-block;font-size:10px;padding:2px 10px;border-radius:50px;color:#fff;margin-bottom:8px}
+.dir-bar-bg{height:6px;background:#E8E8E8;border-radius:50px;overflow:hidden;margin-bottom:8px}
+.dir-bar{height:100%;border-radius:50px;transition:width 1s ease}
+
+/* --- Path detail breakdown --- */
+.path-section{margin-bottom:20px}
+.path-section h3{font-size:17px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.path-detail{background:var(--card);border-radius:var(--radius);padding:20px 20px 16px;box-shadow:var(--shadow);margin-bottom:10px}
+.path-detail .pd-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.path-detail .pd-header .pd-icon{font-size:28px}
+.path-detail .pd-header h4{font-size:16px}
+.path-detail .pd-header .pd-score{margin-left:auto;font-size:13px;font-weight:700;color:var(--primary);background:var(--primary-bg);padding:2px 12px;border-radius:50px}
+.path-detail .pd-desc{font-size:13px;color:var(--text-sec);margin-bottom:8px}
+.path-detail .pd-courses{background:#F8F8F8;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px}
+.path-detail .pd-courses strong{color:var(--primary)}
+
+/* Original radar */
+.chart-container{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:16px;text-align:center}
+.chart-container h3{font-size:15px;margin-bottom:4px}
+#radarChart{max-width:100%}
+.result-summary{background:linear-gradient(135deg,var(--primary-bg),var(--blue-bg));border-radius:var(--radius);padding:18px 20px;margin-bottom:16px}
+.result-summary h3{font-size:15px;margin-bottom:8px}
+.result-summary .top-list{list-style:none}
+.result-summary .top-list li{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:14px}
+.result-summary .top-list li .score{margin-left:auto;font-weight:700;color:var(--primary)}
+
+/* Detail cards */
+.detail-grid{display:grid;gap:12px;margin-bottom:16px}
+.detail-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--primary-light)}
+.detail-card .d-header{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.detail-card .d-header .d-icon{font-size:24px}
+.detail-card .d-header h4{font-size:15px}
+.detail-card .d-score{margin-left:auto;font-size:11px;font-weight:700;color:#fff;background:var(--primary);padding:2px 10px;border-radius:50px}
+.detail-card .d-desc{font-size:13px;color:var(--text-sec);margin-bottom:6px}
+.detail-card .d-suggest{background:var(--primary-bg);border-radius:var(--radius-sm);padding:8px 12px;font-size:12px}
+
+/* Advice */
+.report-box{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.report-box h3{font-size:16px;margin-bottom:10px;text-align:center}
+.advice-list{list-style:none}
+.advice-list li{padding:8px 0;border-bottom:1px solid #F0F0F0;font-size:13px;display:flex;gap:8px}
+.advice-list li:last-child{border:none}
+
+/* Share screenshot card */
+.screenshot-card{background:var(--card);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow);margin-bottom:16px;text-align:center;border:2px dashed #E0E0E0}
+.screenshot-card h3{font-size:15px;margin-bottom:8px;color:var(--text-sec)}
+.screenshot-card .mini-radar{width:180px;height:180px;margin:0 auto 10px}
+.screenshot-card .ss-info{font-size:13px;color:var(--text-sec)}
+.screenshot-card .ss-info strong{color:var(--primary)}
+
+.action-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px 0}
+.footer-text{text-align:center;font-size:11px;color:#B0B0B0;padding:16px 0}
+
+@media(max-width:560px){
+  body{padding:10px}
+  #welcome{padding:24px 6px}
+  #welcome .logo{font-size:56px}
+  #welcome h1{font-size:26px}
+  .welcome-cards{grid-template-columns:repeat(2,1fr)}
+  .question-card{padding:20px 14px;min-height:280px}
+  .question-card .q-text{font-size:17px}
+  .rating-btn .emoji{font-size:22px}
+  .user-form{padding:18px 14px}
+  .direction-grid{grid-template-columns:repeat(2,1fr)}
+  .share-card{padding:24px 16px}
+  .share-card h2{font-size:20px}
+  .dir-card .d-pct{font-size:22px}
+  .detail-card{padding:14px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Welcome -->
+<div class="screen active" id="welcome">
+  <div class="logo">🧪</div>
+  <h1>小小天赋师</h1>
+  <p class="sub">发现孩子的天赋方向，找到最适合的发展路径</p>
+  <div class="welcome-cards">
+    <div class="welcome-card"><div class="icon">🧠</div><h3>8大能力维度</h3><p>多元智能全面评估</p></div>
+    <div class="welcome-card"><div class="icon">🎯</div><h3>6大发展方向</h3><p>匹配工/理/文/体/音/美</p></div>
+    <div class="welcome-card"><div class="icon">📊</div><h3>可视化报告</h3><p>雷达图与匹配度分析</p></div>
+    <div class="welcome-card"><div class="icon">💡</div><h3>培养方案</h3><p>个性化发展建议</p></div>
+  </div>
+  <div class="user-form">
+    <h2>开始测评</h2>
+    <div class="form-group"><label>👶 孩子昵称</label><input type="text" id="childName" placeholder="如：小宝" maxlength="10"></div>
+    <div class="form-group"><label>🎂 年龄</label><select id="childAge"><option value="3">3岁</option><option value="4">4岁</option><option value="5">5岁</option><option value="6">6岁</option><option value="7" selected>7岁</option><option value="8">8岁</option><option value="9">9岁</option><option value="10">10岁</option><option value="11">11岁</option><option value="12">12岁</option></select></div>
+    <div class="form-group"><label>👤 评测人</label><select id="evaluator"><option value="parent">家长</option><option value="teacher">老师</option></select></div>
+    <button class="btn btn-primary btn-block" onclick="startQuiz()">开始测评 →</button>
+  </div>
+</div>
+
+<!-- Quiz -->
+<div class="screen" id="quiz">
+  <div class="quiz-header"><span class="domain-tag" id="domainTag">🧮 逻辑数学</span><span class="counter" id="qCounter">1 / 32</span></div>
+  <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+  <div class="question-card">
+    <div class="q-label" id="qLabel">第 1 题</div>
+    <div class="q-text" id="qText">加载中...</div>
+    <div class="rating-labels"><span>完全不符</span><span>不太符合</span><span>有时符合</span><span>比较符合</span><span>非常符合</span></div>
+    <div class="rating-row" id="ratingRow">
+      <div class="rating-btn" data-val="1" onclick="selectRating(this)"><span class="emoji">😐</span>1</div>
+      <div class="rating-btn" data-val="2" onclick="selectRating(this)"><span class="emoji">🙂</span>2</div>
+      <div class="rating-btn" data-val="3" onclick="selectRating(this)"><span class="emoji">😊</span>3</div>
+      <div class="rating-btn" data-val="4" onclick="selectRating(this)"><span class="emoji">😄</span>4</div>
+      <div class="rating-btn" data-val="5" onclick="selectRating(this)"><span class="emoji">🌟</span>5</div>
+    </div>
+    <div class="question-nav"><button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()">← 上一题</button><button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">下一题 →</button></div>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="screen" id="results">
+
+  <!-- Shareable header card -->
+  <div class="share-card" id="shareCard">
+    <div class="sc-icon" id="resIcon">🌟</div>
+    <h2 id="resTitle">天赋报告</h2>
+    <div class="sc-sub" id="resSub"></div>
+    <div class="sc-tag" id="resTag">推荐发展方向</div>
+  </div>
+
+  <!-- Direction match grid -->
+  <div class="direction-grid" id="dirGrid"></div>
+
+  <!-- Detailed path breakdown -->
+  <div class="path-section" id="pathSection">
+    <h3>📌 发展方向详解</h3>
+    <div id="pathDetails"></div>
+  </div>
+
+  <!-- Radar chart -->
+  <div class="chart-container"><h3>🧬 8大能力雷达图</h3><canvas id="radarChart" width="500" height="500"></canvas></div>
+
+  <!-- Top summary -->
+  <div class="result-summary"><h3>🏆 优势天赋 TOP 3</h3><ul class="top-list" id="topList"></ul></div>
+
+  <!-- Detail grid -->
+  <div class="detail-grid" id="detailGrid"></div>
+
+  <!-- Advice -->
+  <div class="report-box"><h3>📋 综合培养建议</h3><ul class="advice-list" id="adviceList"></ul></div>
+
+  <!-- Screenshot-ready card -->
+  <div class="screenshot-card" id="ssCard">
+    <h3>📱 截图分享</h3>
+    <canvas class="mini-radar" id="miniRadar" width="360" height="360"></canvas>
+    <div class="ss-info" id="ssInfo"></div>
+  </div>
+
+  <div class="action-btns">
+    <button class="btn btn-secondary" onclick="restart()">🔄 重新测评</button>
+    <button class="btn btn-primary" onclick="window.print()">🖨️ 打印/保存</button>
+  </div>
+  <div class="footer-text">小小天赋师 · 每个孩子都有独特的成长节奏 💛</div>
+</div>
+
+</div>
+
+<script>
+// ====== DATA: 8 Domains x 4 Questions ======
+const DOMAINS = [
+{id:"logic",name:"逻辑数学",icon:"🧮",color:"#6C5CE7",desc:"逻辑推理、数学敏感度、因果关系",
+q:["喜欢玩数字游戏、数数或做简单计算","善于发现事物之间的规律和模式（如排列、分类）","喜欢问为什么，对因果关系充满好奇","搭积木或拼图时能提前规划，有条理地完成"]},
+{id:"language",name:"语言表达",icon:"📖",color:"#FD79A8",desc:"语言理解、词汇量、阅读与表达能力",
+q:["词汇量比同龄孩子丰富，能用完整句子表达想法","喜欢听故事、讲故事，能记住并复述故事情节","对文字符号感兴趣，喜欢看书或主动问字怎么读","能用语言清晰地描述自己的感受和经历"]},
+{id:"music",name:"音乐节奏",icon:"🎵",color:"#FDCB6E",desc:"节奏感、音准辨识、音乐记忆力",
+q:["听到音乐时会自然地跟着节奏摇摆或拍手","能记住听过的旋律，并哼唱或模仿出来","对不同的声音、音色敏感（如分辨乐器声）","喜欢敲打物品制造节奏，或自发地唱歌"]},
+{id:"spatial",name:"空间视觉",icon:"🎨",color:"#00B894",desc:"空间想象、图形辨识、艺术创造力",
+q:["喜欢画画、涂鸦，作品有细节和想象力","拼图、迷宫、七巧板等空间类游戏完成得不错","能注意到环境中细微的颜色和形状变化","喜欢用积木、乐高等搭建复杂的立体造型"]},
+{id:"body",name:"身体运动",icon:"🤸",color:"#E17055",desc:"大运动与精细动作、身体协调能力",
+q:["跑、跳、攀爬等大运动能力明显比同龄孩子协调","手工、剪纸、串珠等精细动作做得很好","喜欢模仿别人的动作或舞蹈","精力充沛，喜欢户外活动和身体游戏"]},
+{id:"social",name:"人际社交",icon:"🤝",color:"#0984E3",desc:"共情能力、合作意识、沟通技巧",
+q:["在群体中能主动和其他孩子一起玩、分享","能察觉别人的情绪（如妈妈你不开心吗）","发生矛盾时愿意协商或妥协，不是一味哭闹","在小组活动中常担任组织者或提出主意的人"]},
+{id:"self",name:"自我认知",icon:"🪞",color:"#6C5CE7",desc:"自我意识、独立性、情绪管理与专注力",
+q:["能独自专注地玩一个玩具或做一件事超过15分钟","有自己的主见，能表达自己喜欢什么不喜欢什么","做错了事或遇到挫折后，愿意尝试再来一次","能按简单规则做事（如收拾玩具、按时睡觉）"]},
+{id:"nature",name:"自然探索",icon:"🌿",color:"#00A86B",desc:"观察力、对自然的兴趣、科学探索欲",
+q:["在户外喜欢观察花草、昆虫、小动物","喜欢问关于自然现象的问题（如为什么会下雨）","喜欢照顾植物或小动物，有责任感","喜欢玩沙、水、泥土等自然材料，不排斥脏"]}
+];
+
+// ====== DIRECTION MAPPING ======
+// Each direction maps to weighted domain scores
+const DIRECTIONS = [
+{id:"engineering",name:"工科",icon:"⚙️",color:"#1565C0",tag:"工程技术",emoji:"🔧",
+ desc:"适合从事工程、机械、建筑、航空航天等技术型领域",
+ mapping:{logic:0.30,spatial:0.25,body:0.15,nature:0.10,self:0.10,social:0.05,language:0.03,music:0.02},
+ courses:"乐高机器人、编程启蒙(Scratch/Python)、科学小实验、模型搭建、机械拼插",
+ careers:"工程师、建筑师、程序员、机械设计师、飞行员"},
+{id:"science",name:"理科",icon:"🔬",color:"#00897B",tag:"科学研究",emoji:"🧪",
+ desc:"适合从事科学研究、数学、物理、化学、生物等基础科学领域",
+ mapping:{logic:0.30,nature:0.25,self:0.15,spatial:0.10,language:0.08,music:0.05,social:0.04,body:0.03},
+ courses:"科学实验套装、自然观察记录、数学思维训练、天文科普、化学小实验",
+ careers:"科学家、数学教授、医生、数据分析师、研究员"},
+{id:"liberalarts",name:"文科",icon:"📚",color:"#E91E63",tag:"人文社科",emoji:"📝",
+ desc:"适合从事文学、语言、教育、法律、传媒等社科人文领域",
+ mapping:{language:0.30,social:0.20,self:0.15,logic:0.10,spatial:0.08,nature:0.08,music:0.05,body:0.04},
+ courses:"阅读写作、演讲辩论、外语启蒙、历史故事、戏剧表演",
+ careers:"作家、老师、律师、记者、翻译、外交官"},
+{id:"sports",name:"体育",icon:"🏃",color:"#E65100",tag:"运动健康",emoji:"⚡",
+ desc:"适合从事体育运动、舞蹈、户外探险等身体运动领域",
+ mapping:{body:0.35,self:0.20,social:0.15,music:0.10,spatial:0.08,logic:0.05,language:0.04,nature:0.03},
+ courses:"游泳/体操/跆拳道、球类运动、舞蹈、户外探险、平衡车/自行车",
+ careers:"运动员、体育教练、舞蹈家、健身教练、户外领队"},
+{id:"music",name:"音乐",icon:"🎵",color:"#6A1B9A",tag:"音乐艺术",emoji:"🎶",
+ desc:"适合从事音乐表演、作曲、音乐教育等艺术领域",
+ mapping:{music:0.35,body:0.15,self:0.15,spatial:0.12,social:0.10,language:0.08,logic:0.03,nature:0.02},
+ courses:"乐器学习(钢琴/小提琴/古筝)、合唱团、音乐素养课、节奏打击乐",
+ careers:"音乐家、作曲家、音乐老师、指挥家、音效设计师"},
+{id:"art",name:"美术",icon:"🎨",color:"#C62828",tag:"视觉艺术",emoji:"🖌️",
+ desc:"适合从事绘画、设计、雕塑、动画等视觉创意领域",
+ mapping:{spatial:0.30,body:0.15,self:0.15,music:0.10,social:0.10,nature:0.10,language:0.05,logic:0.05},
+ courses:"创意绘画、手工黏土、折纸、摄影启蒙、色彩搭配游戏",
+ careers:"画家、设计师、动画师、建筑师、艺术老师"}
+];
+
+const QUESTIONS = DOMAINS.flatMap(d=>d.q.map(q=>({domainId:d.id,text:q})));
+const TOTAL = QUESTIONS.length;
+
+let state = {answers:[],currentIdx:0,childName:"",childAge:7,evaluator:"parent"};
+
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active")}
+
+function startQuiz(){
+  const n = document.getElementById("childName").value.trim() || "宝贝";
+  state.childName=n;
+  state.childAge=parseInt(document.getElementById("childAge").value);
+  state.evaluator=document.getElementById("evaluator").value;
+  state.answers=new Array(TOTAL).fill(0);
+  state.currentIdx=0;
+  showScreen("quiz");
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const i=state.currentIdx,q=QUESTIONS[i],d=DOMAINS.find(x=>x.id===q.domainId);
+  document.getElementById("domainTag").innerHTML=d.icon+" "+d.name;
+  document.getElementById("qCounter").textContent=(i+1)+"/"+TOTAL;
+  document.getElementById("progressFill").style.width=((i+1)/TOTAL*100)+"%";
+  document.getElementById("qLabel").textContent="第"+(i+1)+"题 · "+d.name;
+  document.getElementById("qText").textContent=q.text;
+  document.querySelectorAll(".rating-btn").forEach(b=>b.classList.toggle("selected",parseInt(b.dataset.val)===state.answers[i]));
+  document.getElementById("prevBtn").style.visibility=i===0?"hidden":"visible";
+  const n=document.getElementById("nextBtn");
+  n.textContent=i===TOTAL-1?"✅ 查看报告":"下一题 →";
+}
+
+function selectRating(el){
+  state.answers[state.currentIdx]=parseInt(el.dataset.val);
+  document.querySelectorAll(".rating-btn").forEach(b=>b.classList.remove("selected"));
+  el.classList.add("selected");
+  setTimeout(nextQuestion,350);
+}
+
+function nextQuestion(){
+  if(state.answers[state.currentIdx]===0){shakeEl(document.getElementById("ratingRow"));return}
+  if(state.currentIdx===TOTAL-1){showResults();return}
+  state.currentIdx++;renderQuestion()
+}
+
+function prevQuestion(){if(state.currentIdx===0)return;state.currentIdx--;renderQuestion()}
+
+function shakeEl(el){el.style.animation="none";void el.offsetHeight;el.style.animation="shake .4s ease";setTimeout(()=>el.style.animation="",500)}
+(()=>{let s=document.createElement("style");s.textContent="@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}";document.head.appendChild(s)})();
+
+// ====== RESULTS ======
+function showResults(){
+  showScreen("results");
+  const scores = computeScores();
+  const dirScores = computeDirectionScores(scores);
+  const topDir = [...dirScores].sort((a,b)=>b.score-a.score);
+
+  document.getElementById("resTitle").textContent = state.childName+" 的天赋报告";
+  document.getElementById("resSub").textContent = state.childAge+"岁 · "+(state.evaluator==="parent"?"家长":"老师")+"评测";
+  document.getElementById("resTag").textContent = "🌟 推荐方向："+topDir[0].name;
+  document.getElementById("resIcon").textContent = topDir[0].icon;
+
+  renderDirectionGrid(dirScores);
+  renderPathDetails(dirScores);
+  renderTopSummary(scores);
+  drawRadar(scores,"radarChart");
+  drawRadar(scores,"miniRadar");
+  renderDetails(scores);
+  renderAdvice(scores,topDir);
+  document.getElementById("ssInfo").innerHTML = state.childName+" · "+state.childAge+"岁 · 最佳方向：<strong>"+topDir[0].icon+" "+topDir[0].name+"</strong> "+topDir[0].score+"%";
+}
+
+function computeScores(){
+  const r={};DOMAINS.forEach(d=>r[d.id]=[]);
+  QUESTIONS.forEach((q,i)=>r[q.domainId].push(state.answers[i]||0));
+  return DOMAINS.map(d=>{const v=r[d.id];return{...d,score:Math.round(v.reduce((a,b)=>a+b,0)/v.length/5*100)}})
+}
+
+function computeDirectionScores(domainScores){
+  return DIRECTIONS.map(dir=>{
+    let score=0;
+    for(const [did,w] of Object.entries(dir.mapping)){
+      const ds=domainScores.find(d=>d.id===did);
+      if(ds) score+=ds.score*w;
+    }
+    return{...dir,score:Math.round(score)};
+  });
+}
+
+function renderDirectionGrid(dirScores){
+  const sorted = [...dirScores].sort((a,b)=>b.score-a.score);
+  const grid = document.getElementById("dirGrid");
+  grid.innerHTML = sorted.map((d,i)=>{
+    const isTop=i===0;
+    return '<div class="dir-card'+(isTop?' top1':'')+'">'+
+      '<div class="d-icon">'+d.icon+'</div>'+
+      '<div class="d-name">'+d.name+'</div>'+
+      '<div class="d-pct">'+d.score+'<sup>%</sup></div>'+
+      '<div class="d-label">匹配度</div>'+
+      '<div class="d-tag" style="background:'+d.color+'">'+d.tag+'</div>'+
+      '<div class="dir-bar-bg"><div class="dir-bar" style="width:'+d.score+'%;background:'+d.color+'"></div></div>'+
+      (isTop?'<div style="font-size:11px;color:var(--primary);font-weight:600">⭐ 最推荐方向</div>':'')+
+    '</div>'
+  }).join("");
+}
+
+function renderPathDetails(dirScores){
+  const sorted = [...dirScores].sort((a,b)=>b.score-a.score);
+  const container = document.getElementById("pathDetails");
+  container.innerHTML = sorted.map(d=>{
+    return '<div class="path-detail">'+
+      '<div class="pd-header">'+
+        '<span class="pd-icon">'+d.icon+'</span>'+
+        '<h4>'+d.name+'</h4>'+
+        '<span class="pd-score">'+d.score+'% 匹配</span>'+
+      '</div>'+
+      '<div class="pd-desc">'+d.desc+'</div>'+
+      '<div class="pd-courses"><strong>🎯 适合课程：</strong>'+d.courses+'</div>'+
+    '</div>'
+  }).join("");
+}
+
+function renderTopSummary(scores){
+  const t=[...scores].sort((a,b)=>b.score-a.score).slice(0,3);
+  document.getElementById("topList").innerHTML=t.map((s,i)=>'<li><span style="font-size:20px">'+["🥇","🥈","🥉"][i]+'</span>'+s.icon+" "+s.name+'<span class="score">'+s.score+"%</span></li>").join("")
+}
+
+function getS(id,sc){
+  const m={
+    logic:sc>=70?"可以尝试围棋、编程启蒙（如 Scratch）、数独游戏等。引导孩子发现生活中的数学，鼓励有条理地表达思考过程。":"多陪孩子玩分类游戏（如按颜色/形状整理玩具）、简单桌游（如 UNO）。生活中多问你觉得接下来会发生什么来锻炼逻辑推理。",
+    language:sc>=70?"鼓励多阅读绘本和简单章节书，可以尝试讲故事录音、参加朗诵或演讲活动。培养写日记或编故事的习惯。":"每天固定亲子阅读时间，读完后让孩子复述。多和孩子聊天，鼓励用完整句子表达。",
+    music:sc>=70?"可考虑学习一种乐器（钢琴/小提琴/尤克里里等），参加合唱团或音乐启蒙课程。多带孩子听不同风格的音乐会。":"多播放不同节奏的儿歌和音乐，和孩子一起拍手打节奏。玩简单打击乐器培养乐感。",
+    spatial:sc>=70?"提供丰富的艺术材料（水彩、黏土、拼贴），鼓励自由创作。可以尝试乐高机械组、折纸、摄影等空间创意活动。":"多玩拼图和形状配对游戏。给孩子提供安全画笔和大纸张，鼓励自由涂鸦，不追求画得像。",
+    body:sc>=70?"可选择一项运动系统培养（游泳/体操/跆拳道/足球等）。多去户外跑跳攀爬，精细动作可尝试乐高、串珠、编织。":"确保每天有充足的户外活动时间。玩模仿动物走路、障碍跑等游戏。",
+    social:sc>=70?"鼓励参加团队活动（体育队伍、戏剧社、小组项目）。培养领导力，让孩子在安全范围内组织家庭活动或小伙伴聚会。":"多创造和其他孩子玩耍的机会。用绘本和角色扮演教孩子识别和表达情绪。",
+    self:sc>=70?"给予适当的自主决策权（如选择穿什么衣服、周末去哪玩）。鼓励设定小目标并坚持完成，培养计划和复盘的习惯。":"建立规律作息，用可视化任务表帮助孩子养成习惯。当孩子专注玩耍时不要打断。",
+    nature:sc>=70?"多带孩子去自然博物馆、植物园、农场。可以养一只小宠物或种一盆植物。提供放大镜、望远镜等探索工具，鼓励科学观察记录。":"周末多安排户外自然活动。一起种容易生长的植物（如豆芽），让孩子体验照料的过程。"
+  };return m[id]||"根据孩子的兴趣和节奏，提供丰富多样的体验机会。"
+}
+
+function renderDetails(scores){
+  const t=[...scores].sort((a,b)=>b.score-a.score);
+  document.getElementById("detailGrid").innerHTML=t.map(s=>'<div class="detail-card"><div class="d-header"><span class="d-icon">'+s.icon+'</span><h4>'+s.name+'</h4><span class="d-score">'+s.score+'%</span></div><div class="d-desc">'+s.desc+'</div><div class="d-suggest"><strong>💡 培养建议：</strong>'+getS(s.id,s.score)+'</div></div>').join("")
+}
+
+function renderAdvice(scores,topDir){
+  const t=[...scores].sort((a,b)=>b.score-a.score),tp=t[0],lw=t.filter(s=>s.score<45);
+  const is=[
+    {icon:"🌟",title:"核心天赋："+tp.name+"（"+tp.score+"%）",text:"这是"+state.childName+"最突出的天赋领域，建议重点培养并提供优质资源。"},
+    {icon:"🎯",title:"推荐发展方向："+topDir[0].icon+" "+topDir[0].name+"（"+topDir[0].score+"%）",text:topDir[0].desc+"。建议优先考虑这个方向的相关课程和活动。"},
+    {icon:"📈",title:"发展策略：以强带弱",text:"用"+tp.name+"方面的优势建立自信，逐步引导到需要加强的领域。"},
+    {icon:"⏰",title:"关键期提醒",text:state.childAge+"岁的孩子正处于大脑快速发育期，丰富的感官体验和多元尝试比早期专项训练更重要。"},
+    {icon:"🏠",title:"家庭环境建议",text:"为孩子提供安全、自由、鼓励探索的环境。减少电子屏幕时间，增加动手实践和户外活动。多给予具体表扬。"}
+  ];
+  if(lw.length>0) is.push({icon:"🌱",title:"需要关注的领域："+lw.map(s=>s.name).join("、"),text:"这些方面目前得分偏低。不用焦虑——低分不代表缺陷。"});
+  document.getElementById("adviceList").innerHTML=is.map(a=>'<li><span style="font-size:18px;flex-shrink:0">'+a.icon+'</span><div><strong>'+a.title+'</strong><br>'+a.text+'</div></li>').join("")
+}
+
+function drawRadar(scores,canvasId){
+  const c=document.getElementById(canvasId),ctx=c.getContext("2d");
+  const W=c.width,H=c.height,cx=W/2,cy=H/2,R=Math.min(W,H)*.36,n=scores.length,st=Math.PI*2/n;
+  ctx.clearRect(0,0,W,H);
+  for(let l=1;l<=5;l++){let r=R/5*l;ctx.beginPath();for(let i=0;i<=n;i++){let a=-Math.PI/2+i*st,x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.closePath();ctx.strokeStyle=l===5?"#D0D0D0":"#E8E8E8";ctx.lineWidth=l===5?1.5:1;ctx.stroke()}
+  for(let i=0;i<n;i++){let a=-Math.PI/2+i*st;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));ctx.strokeStyle="#E0E0E0";ctx.stroke()}
+  ctx.beginPath();
+  for(let i=0;i<=n;i++){let idx=i%n,a=-Math.PI/2+idx*st,r=R*Math.max(scores[idx].score/100,.02);ctx[i===0?"moveTo":"lineTo"](cx+r*Math.cos(a),cy+r*Math.sin(a))}
+  ctx.closePath();ctx.fillStyle="rgba(108,92,231,0.12)";ctx.fill();ctx.strokeStyle="#6C5CE7";ctx.lineWidth=2.5;ctx.stroke();
+  ctx.textAlign="center";ctx.textBaseline="middle";
+  const isMini = canvasId==="miniRadar";
+  const baseFont = isMini ? 10 : 13;
+  for(let i=0;i<n;i++){let a=-Math.PI/2+i*st,r=R*Math.max(scores[i].score/100,.02),x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+    ctx.beginPath();ctx.arc(x,y,isMini?3:5,0,Math.PI*2);ctx.fillStyle=scores[i].color;ctx.fill();ctx.strokeStyle="#fff";ctx.lineWidth=isMini?1:2;ctx.stroke();
+    ctx.font="bold "+(isMini?9:11)+"px sans-serif";ctx.fillStyle=scores[i].color;ctx.fillText(scores[i].score+"%",x,y-(isMini?12:16));
+    let lr=R+(isMini?24:30);ctx.font="600 "+baseFont+"px -apple-system,'Noto Sans SC',sans-serif";ctx.fillStyle=isMini?"#555":"#2D3436";ctx.fillText(isMini?scores[i].name:(scores[i].icon+" "+scores[i].name),cx+lr*Math.cos(a),cy+lr*Math.sin(a))}
+}
+
+function restart(){showScreen("welcome");document.getElementById("childName").value=""}
+
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.getElementById("quiz").classList.contains("active")){e.preventDefault();nextQuestion()}});
+</script>
+</body>
+</html>
