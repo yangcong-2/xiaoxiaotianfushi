@@ -1,1 +1,38 @@
-
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>育儿攻略 - 从怀孕到孩子成年全程指南</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header id="header">
+  <div class="header-inner">
+    <a href="#" class="logo" onclick="goHome()">👶 育儿攻略</a>
+    <nav>
+      <a href="#" onclick="goHome()">首页</a>
+      <a href="#" onclick="showAll()">所有文章</a>
+      <a href="#" onclick="showAbout()">关于本站</a>
+    </nav>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  </div>
+</header>
+<div id="app">
+  <div id="loading" class="loading">加载中...</div>
+  <div id="content"></div>
+</div>
+<div class="ad-banner" id="adBanner">
+  <div class="ad-placeholder">📢 广告位招租</div>
+</div>
+<footer>
+  <div class="footer-inner">
+    <p>&copy; 2026 育儿攻略 - 用心陪伴，科学育儿</p>
+    <p>本站内容仅供参考，具体医疗建议请咨询专业医生</p>
+  </div>
+</footer>
+<script src="data/content.js"></script>
+<script src="data/content-additions.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
